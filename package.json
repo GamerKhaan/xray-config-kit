@@ -6,7 +6,10 @@
   "packageManager": "bun",
   "license": "AGPL-3.0",
   "author": "PasarGuard",
-  "repository": "https://github.com/PasarGuard/xray-config-kit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PasarGuard/xray-config-kit.git"
+  },
   "sideEffects": false,
   "files": [
     "dist"
