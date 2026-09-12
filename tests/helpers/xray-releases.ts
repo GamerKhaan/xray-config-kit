@@ -11,7 +11,9 @@ export const selectedGeneratedReleaseTags = [
   "v26.6.22",
   "v26.6.27",
   "v26.7.11",
-  "v26.7.28"
+  "v26.7.28",
+  "v26.9.8",
+  "v26.9.9"
 ] as const;
 export const selectedGeneratedVersions = [
   "25.10.15",
@@ -20,8 +22,10 @@ export const selectedGeneratedVersions = [
   "26.6.22",
   "26.6.27",
   "26.7.11",
-  "26.7.28"
+  "26.7.28",
+  "26.9.8",
+  "26.9.9"
 ] as const;
 export const selectedGeneratedReleases = getXrayParityReleases();
 export const oldestGeneratedRelease = selectedGeneratedReleases[0]!;
-export const latestGeneratedRelease = getXrayParityRelease({ releaseTag: "v26.7.28" });
+export const latestGeneratedRelease = getXrayParityRelease({ releaseTag: "v26.9.9" });

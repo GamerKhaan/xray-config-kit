@@ -149,7 +149,7 @@ export type TlsSecurity = {
   readonly curvePreferences?: string[];
   readonly masterKeyLog?: string;
   readonly pinnedPeerCertSha256?: string;
-  readonly verifyPeerCertByName?: string[];
+  readonly verifyPeerCertByName?: string | string[];
   readonly echServerKeys?: string;
   readonly echConfigList?: string;
   readonly echForceQuery?: "none" | "half" | "full";
@@ -313,6 +313,7 @@ export type QuicParams = {
   readonly bbrProfile?: "conservative" | "standard" | "aggressive";
   readonly brutalUp?: string;
   readonly brutalDown?: string;
+  readonly brutalDisableLossCompensation?: boolean;
   readonly udpHop?: UdpHop;
   readonly initStreamReceiveWindow?: number;
   readonly maxStreamReceiveWindow?: number;
@@ -321,7 +322,10 @@ export type QuicParams = {
   readonly maxIdleTimeout?: number;
   readonly keepAlivePeriod?: number;
   readonly disablePathMTUDiscovery?: boolean;
+  readonly disableChromeParrot?: boolean;
+  readonly disableGSO?: boolean;
   readonly maxIncomingStreams?: number;
+  readonly disableStatelessReset?: boolean;
 };
 
 export type HysteriaTransport = {
@@ -753,6 +757,7 @@ export type TlsConfig = {
   readonly curvePreferences?: readonly string[];
   readonly masterKeyLog?: string;
   readonly serverNameToVerify?: string;
+  readonly verifyPeerCertByName?: string | readonly string[];
   readonly verifyPeerCertInNames?: readonly string[];
   readonly echServerKeys?: string;
   readonly echConfigList?: string;

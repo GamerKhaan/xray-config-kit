@@ -126,7 +126,6 @@ describe("xray stream transport settings parity", () => {
         hysteriaSettings: {
           version: 2,
           auth: "secret",
-          congestion: "bbr",
           udpIdleTimeout: 60,
           masquerade: {}
         }

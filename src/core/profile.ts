@@ -1,5 +1,6 @@
 import { applyPresets } from "../presets/index.js";
-import type { CreateProfileInput, JsonObject, Inbound, Outbound, Profile } from "./types.js";
+import { coerceVerifyPeerCertByNameList, stringifyVerifyPeerCertByName } from "./tls-fields.js";
+import type { CreateProfileInput, JsonObject, Inbound, Outbound, Profile, TlsSecurity } from "./types.js";
 
 function asPortMapStrings(value: Record<string, unknown>): Record<string, string> {
   const out: Record<string, string> = {};
@@ -128,6 +129,44 @@ export function profileSourceFingerprint(profile: Profile): string {
   });
 }
 
+function normalizeInboundTlsVerifyPeerCertByName(inbound: Inbound): Inbound {
+  if (!("security" in inbound) || !inbound.security || inbound.security.type !== "tls") return inbound
+  const current = inbound.security.verifyPeerCertByName
+  const next = coerceVerifyPeerCertByNameList(current)
+  if (next === undefined) {
+    if (current === undefined) return inbound
+    const { verifyPeerCertByName: _removed, ...security } = inbound.security
+    return { ...inbound, security: security as TlsSecurity }
+  }
+  if (Array.isArray(current) && current.length === next.length && current.every((item, index) => item === next[index])) {
+    return inbound
+  }
+  return { ...inbound, security: { ...inbound.security, verifyPeerCertByName: next } }
+}
+
+function normalizeOutboundTlsVerifyPeerCertByName(outbound: Outbound): Outbound {
+  if (outbound.protocol === "unmanaged") return outbound
+  const streamSettings = outbound.streamSettings
+  if (!streamSettings || typeof streamSettings !== "object") return outbound
+  const tlsSettings = streamSettings.tlsSettings
+  if (!tlsSettings || typeof tlsSettings !== "object" || Array.isArray(tlsSettings)) return outbound
+  if (!("verifyPeerCertByName" in tlsSettings)) return outbound
+
+  const next = stringifyVerifyPeerCertByName(tlsSettings.verifyPeerCertByName)
+  const tls = { ...tlsSettings } as Record<string, unknown>
+  if (next === undefined) delete tls.verifyPeerCertByName
+  else if (tls.verifyPeerCertByName === next) return outbound
+  else tls.verifyPeerCertByName = next
+
+  return {
+    ...outbound,
+    streamSettings: {
+      ...streamSettings,
+      tlsSettings: tls
+    }
+  } as Outbound
+}
+
 export function normalizeProfile(profile: Profile): Profile {
   const outbounds = profile.outbounds && profile.outbounds.length > 0
     ? profile.outbounds
@@ -139,8 +178,10 @@ export function normalizeProfile(profile: Profile): Profile {
     ...profile,
     schemaVersion: "xck.v1",
     inbounds: inbounds.map((ib) =>
-      normalizeDokodemoTunnelInboundPortMap(stripPortMapFromNonTunnelDokodemoInbounds(ib))
+      normalizeInboundTlsVerifyPeerCertByName(
+        normalizeDokodemoTunnelInboundPortMap(stripPortMapFromNonTunnelDokodemoInbounds(ib))
+      )
     ),
-    outbounds
+    outbounds: outbounds?.map(normalizeOutboundTlsVerifyPeerCertByName)
   };
 }

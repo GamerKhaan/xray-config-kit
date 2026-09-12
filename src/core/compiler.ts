@@ -3,6 +3,7 @@ import { analyzeProfile } from "../analyze/index.js";
 import { applyRawPatch, cloneJson, isJsonObject, mergeTopLevel } from "./json.js";
 import { hasErrors, makeIssue } from "./issues.js";
 import { normalizeProfile, profileSourceFingerprint } from "./profile.js";
+import { stringifyVerifyPeerCertByName } from "./tls-fields.js";
 import type {
   BuildOptions,
   BuildResult,
@@ -293,7 +294,7 @@ function compileTls(security: TlsSecurity): JsonObject {
     curvePreferences: security.curvePreferences,
     masterKeyLog: security.masterKeyLog,
     pinnedPeerCertSha256: security.pinnedPeerCertSha256,
-    verifyPeerCertByName: security.verifyPeerCertByName?.join(","),
+    verifyPeerCertByName: stringifyVerifyPeerCertByName(security.verifyPeerCertByName),
     echServerKeys: security.echServerKeys,
     echConfigList: security.echConfigList,
     echForceQuery: security.echForceQuery,
@@ -424,6 +425,7 @@ function compileQuicParams(params: QuicParams): JsonObject {
     bbrProfile: params.bbrProfile,
     brutalUp: params.brutalUp,
     brutalDown: params.brutalDown,
+    brutalDisableLossCompensation: params.brutalDisableLossCompensation,
     udpHop: params.udpHop ? compactObject({
       ports: Array.isArray(params.udpHop.ports) ? params.udpHop.ports.join(",") : params.udpHop.ports,
       interval: params.udpHop.interval
@@ -435,7 +437,10 @@ function compileQuicParams(params: QuicParams): JsonObject {
     maxIdleTimeout: params.maxIdleTimeout,
     keepAlivePeriod: params.keepAlivePeriod,
     disablePathMTUDiscovery: params.disablePathMTUDiscovery,
-    maxIncomingStreams: params.maxIncomingStreams
+    disableChromeParrot: params.disableChromeParrot,
+    disableGSO: params.disableGSO,
+    maxIncomingStreams: params.maxIncomingStreams,
+    disableStatelessReset: params.disableStatelessReset
   });
 }
 

@@ -76,8 +76,7 @@ describe("strict xray json error surface", () => {
       "/inbounds/1/settings",
       "/outbounds/1/strayEnvelope",
       "/outbounds/1/settings",
-      "/outbounds/1/mux",
-      "/outbounds/1/proxySettings"
+      "/outbounds/1/mux"
     ]));
   });
 

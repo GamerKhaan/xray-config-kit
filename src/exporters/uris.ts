@@ -242,7 +242,7 @@ function appendSecurityParams(params: URLSearchParams, streamSettings: JsonObjec
     setParam(params, "alpn", alpn);
     if (asBoolean(tls.allowInsecure)) params.set("allowInsecure", "1");
     setParam(params, "pcs", tls.pinnedPeerCertSha256);
-    setParam(params, "vcn", tls.verifyPeerCertByName);
+    setParam(params, "vcn", Array.isArray(tls.verifyPeerCertByName) ? tls.verifyPeerCertByName.join(",") : tls.verifyPeerCertByName);
     setParam(params, "ech", tls.echConfigList);
     setParam(params, "echForceQuery", tls.echForceQuery);
   }
@@ -266,7 +266,7 @@ function appendSecurityToVmessPayload(payload: Record<string, LooseJsonValue>, s
     payload.fp = tls.fingerprint;
     payload.alpn = asStringArray(tls.alpn)?.join(",") ?? asString(tls.alpn);
     payload.pcs = tls.pinnedPeerCertSha256;
-    payload.vcn = tls.verifyPeerCertByName;
+    payload.vcn = Array.isArray(tls.verifyPeerCertByName) ? tls.verifyPeerCertByName.join(",") : tls.verifyPeerCertByName;
     payload.ech = tls.echConfigList;
     payload.echForceQuery = tls.echForceQuery;
     if (asBoolean(tls.allowInsecure)) payload.allowInsecure = 1;

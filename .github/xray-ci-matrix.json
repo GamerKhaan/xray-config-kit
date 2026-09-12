@@ -22,6 +22,9 @@
       "xray-release": "v26.7.28"
     },
     {
+      "xray-release": "v26.9.8"
+    },
+    {
       "xray-release": "latest"
     }
   ]

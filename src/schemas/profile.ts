@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import { coerceVerifyPeerCertByNameList } from "../core/tls-fields.js";
 import { inboundPortSchema, jsonObjectSchema, jsonValueSchema, portSchema, tagSchema } from "./shared.js";
 
 export const rawPatchSchema = z.object({
@@ -137,7 +138,10 @@ export const tlsSecuritySchema = z.object({
   curvePreferences: z.array(z.string()).optional(),
   masterKeyLog: z.string().optional(),
   pinnedPeerCertSha256: z.string().optional(),
-  verifyPeerCertByName: z.array(z.string()).optional(),
+  verifyPeerCertByName: z.preprocess(
+    (value) => (value == null || value === "" ? undefined : coerceVerifyPeerCertByNameList(value) ?? value),
+    z.array(z.string()).optional()
+  ),
   echServerKeys: z.string().optional(),
   echConfigList: z.string().optional(),
   echForceQuery: z.enum(["none", "half", "full"]).optional(),
@@ -279,6 +283,7 @@ export const quicParamsSchema = z.object({
   bbrProfile: z.enum(["conservative", "standard", "aggressive"]).optional(),
   brutalUp: z.string().optional(),
   brutalDown: z.string().optional(),
+  brutalDisableLossCompensation: z.boolean().optional(),
   udpHop: udpHopSchema.optional(),
   initStreamReceiveWindow: z.number().int().min(0).optional(),
   maxStreamReceiveWindow: z.number().int().min(0).optional(),
@@ -287,7 +292,10 @@ export const quicParamsSchema = z.object({
   maxIdleTimeout: z.number().int().min(0).optional(),
   keepAlivePeriod: z.number().int().min(0).optional(),
   disablePathMTUDiscovery: z.boolean().optional(),
-  maxIncomingStreams: z.number().int().min(0).optional()
+  disableChromeParrot: z.boolean().optional(),
+  disableGSO: z.boolean().optional(),
+  maxIncomingStreams: z.number().int().min(0).optional(),
+  disableStatelessReset: z.boolean().optional()
 }).strict();
 
 export const hysteriaMasqueradeSchema = z.object({

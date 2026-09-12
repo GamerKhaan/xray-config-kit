@@ -281,6 +281,7 @@ function featureKeys(feature: string): string[] {
   if (text.includes("global transport")) return ["global transport"];
   if (text.includes("mkcp header")) return ["mkcp header/seed"];
   if (text.includes("allowinsecure")) return ["allowInsecure"];
+  if (text.includes("proxysettings")) return ["proxySettings"];
   if (text.includes("verifypeercertinnames")) return ["verifyPeerCertInNames"];
   if (text.includes("nonipquery") || text.includes("blocktypes")) return ["dns legacy nonIPQuery blockTypes"];
   if (text.includes("\"host\" in \"headers\"")) return ["xhttp headers host"];

@@ -1,6 +1,7 @@
 import { knownXrayTopLevelKeys } from "../xray-json/index.js";
 import { createProfile, profileSourceFingerprint } from "../core/profile.js";
 import { isJsonObject } from "../core/json.js";
+import { coerceVerifyPeerCertByNameList } from "../core/tls-fields.js";
 import { makeIssue } from "../core/issues.js";
 import type {
   Dns,
@@ -125,8 +126,7 @@ function parseSecurity(streamSettings: JsonObject | undefined): Security | undef
       curvePreferences: asStringArray(tls.curvePreferences),
       masterKeyLog: asString(tls.masterKeyLog),
       pinnedPeerCertSha256: asString(tls.pinnedPeerCertSha256),
-      verifyPeerCertByName: asString(tls.verifyPeerCertByName)?.split(",").map((value) => value.trim()).filter(Boolean)
-        ?? asStringArray(tls.verifyPeerCertByName),
+      verifyPeerCertByName: coerceVerifyPeerCertByNameList(tls.verifyPeerCertByName),
       echServerKeys: asString(tls.echServerKeys),
       echConfigList: asString(tls.echConfigList),
       echForceQuery: asString(tls.echForceQuery) as never,
@@ -336,6 +336,7 @@ function parseStreamAdvanced(streamSettings: JsonObject | undefined): Extract<In
     bbrProfile: asString(quicRaw.bbrProfile) as never,
     brutalUp: asString(quicRaw.brutalUp),
     brutalDown: asString(quicRaw.brutalDown),
+    brutalDisableLossCompensation: asBoolean(quicRaw.brutalDisableLossCompensation),
     udpHop: isJsonObject(quicRaw.udpHop) ? {
       ports: typeof quicRaw.udpHop.ports === "string" ? quicRaw.udpHop.ports : asStringArray(quicRaw.udpHop.ports),
       interval: asIntRange(quicRaw.udpHop.interval)
@@ -347,7 +348,10 @@ function parseStreamAdvanced(streamSettings: JsonObject | undefined): Extract<In
     maxIdleTimeout: asNumber(quicRaw.maxIdleTimeout),
     keepAlivePeriod: asNumber(quicRaw.keepAlivePeriod),
     disablePathMTUDiscovery: asBoolean(quicRaw.disablePathMTUDiscovery),
-    maxIncomingStreams: asNumber(quicRaw.maxIncomingStreams)
+    disableChromeParrot: asBoolean(quicRaw.disableChromeParrot),
+    disableGSO: asBoolean(quicRaw.disableGSO),
+    maxIncomingStreams: asNumber(quicRaw.maxIncomingStreams),
+    disableStatelessReset: asBoolean(quicRaw.disableStatelessReset)
   } : undefined;
   if (!sockopt && !finalmask && !quicParams) return undefined;
   return { sockopt, finalmask, quicParams };

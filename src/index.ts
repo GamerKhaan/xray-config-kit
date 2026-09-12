@@ -4,6 +4,10 @@ export {
   normalizeDokodemoTunnelInboundPortMap
 } from "./core/profile.js";
 export {
+  coerceVerifyPeerCertByNameList,
+  stringifyVerifyPeerCertByName
+} from "./core/tls-fields.js";
+export {
   validateProfile
 } from "./core/validate.js";
 export {
